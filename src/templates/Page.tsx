@@ -95,12 +95,13 @@ export default function Page({ data }: Props) {
                   <h1>{page.title}</h1>
                   <div>{page.description}</div>
                 </div>
-                <div>
+                <ImageContainer>
                   <GatsbyImage
                     image={page.mainImage.asset.gatsbyImageData}
                     alt=""
+                    imgClassName="mainImg"
                   />
-                </div>
+                </ImageContainer>
               </FirstBlock>
               <Block>
                 <h2>Kuka? Mitä?</h2>
@@ -161,7 +162,10 @@ const Block = styled.div`
 
 const FirstBlock = styled(Block)`
   > div {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
+  }
+  .mainImg {
+    border-radius: 50%;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.mobileBreakpoint}px) {
     flex-direction: row;
@@ -169,6 +173,10 @@ const FirstBlock = styled(Block)`
       flex: 1 1 50%;
     }
   }
+`
+
+const ImageContainer = styled.div`
+  margin-top: 30px;
 `
 
 const Links = styled.div``
