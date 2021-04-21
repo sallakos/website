@@ -9,7 +9,8 @@ module.exports = {
       resolve: 'gatsby-source-sanity',
       options: {
         projectId: process.env.SANITY_ID,
-        dataset: '',
+        dataset: process.env.SANITY_DATASET,
+        token: process.env.SANITY_TOKEN,
       },
     },
     'gatsby-plugin-styled-components',
