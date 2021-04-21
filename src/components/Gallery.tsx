@@ -17,9 +17,15 @@ export default function Gallery({ images }: GalleryProps) {
   const theme = useTheme()
   const rows = width >= theme.breakpoints.tabletBreakpoint ? 2 : 3
   const columns = width >= theme.breakpoints.tabletBreakpoint ? 3 : 2
+  const padding =
+    width >= theme.breakpoints.tabletBreakpoint
+      ? 100
+      : width >= theme.breakpoints.mobileBreakpoint
+      ? 50
+      : 40
 
-  const maxImgHeight = (height - 200 - 150) / rows
-  const maxImgWidth = (width - 200) / columns
+  const maxImgHeight = (height - 2 * padding - 150) / rows
+  const maxImgWidth = (width - 2 * padding) / columns
 
   const maxImgSize = Math.min(maxImgWidth, maxImgHeight)
 
@@ -34,10 +40,18 @@ export default function Gallery({ images }: GalleryProps) {
       <IGItem>
         <a href="https://www.instagram.com/martinelamaa">
           <AbsoluteImageContainer>
-            <StaticImage src="../images/doggo.png" alt="" />
+            <StaticImage
+              src="../images/doggo.png"
+              alt=""
+              placeholder="blurred"
+            />
           </AbsoluteImageContainer>
           <ImageContainer>
-            <StaticImage src="../images/igGlyph.png" alt="" />
+            <StaticImage
+              src="../images/igGlyph.png"
+              alt=""
+              placeholder="blurred"
+            />
           </ImageContainer>
           <IGText>@martinelamaa</IGText>
         </a>

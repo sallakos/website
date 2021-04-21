@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { graphql } from 'gatsby'
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { GatsbyImage, IGatsbyImageData } from 'gatsby-plugin-image'
@@ -128,6 +128,7 @@ export default function Page({ data }: Props) {
 
 const BGWrap = styled.div`
   background: url(${BackgroundImage});
+  background-color: #adffdc;
   background-size: cover;
   background-position: center top;
   background-attachment: scroll;
@@ -135,14 +136,14 @@ const BGWrap = styled.div`
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
+  // height: 100vh;
+  // overflow-y: scroll;
+  // scroll-snap-type: y mandatory;
 `
 
 const Block = styled.div`
-  height: 100vh;
-  scroll-snap-align: center;
+  min-height: 100vh;
+  // scroll-snap-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -159,9 +160,14 @@ const Block = styled.div`
 `
 
 const FirstBlock = styled(Block)`
-  flex-direction: row;
   > div {
-    flex: 1 1 50%;
+    flex: 0 1 auto;
+  }
+  @media (min-width: ${(props) => props.theme.breakpoints.mobileBreakpoint}px) {
+    flex-direction: row;
+    > div {
+      flex: 1 1 50%;
+    }
   }
 `
 
