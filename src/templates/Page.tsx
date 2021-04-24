@@ -1,27 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { graphql } from 'gatsby'
-import styled, { ThemeProvider } from 'styled-components'
+import styled, { ThemeProvider, useTheme } from 'styled-components'
 import { GatsbyImage, IGatsbyImageData } from 'gatsby-plugin-image'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { blocksToParagraphs, BlockProps } from '../utils/utils'
 import { useScrollPosition } from '../utils/scrollPosition'
+import { useWindowWidth } from '../utils/windowSize'
 
 import Gallery from '../components/Gallery'
 import { SEO } from '../components/SEO'
 
 import { websiteTheme } from '../assets/theme'
-import '../assets/fonts.css'
+import '../assets/style.css'
 import { GlobalStyle } from '../assets/style'
 import BackgroundImage from '../images/meshGradient.png'
-import { useWindowSize } from '../utils/windowSize'
 import { ContactLink } from '../components/ContactLink'
 
 export default function Page({ data }: Props) {
   const page = data.sanityPage
   const gallery = data.sanityGallery
 
-  const windowSize = useWindowSize()
+  const theme = useTheme()
+  const width = useWindowWidth()
   const scrollPosition = useScrollPosition()
 
   const titleRef = useRef<HTMLHeadingElement>(null)
@@ -32,6 +32,8 @@ export default function Page({ data }: Props) {
   const [scaleStart, setScaleStart] = useState(0)
   const [scaleLength, setScaleLength] = useState(0)
   const [positionLength, setPositionLength] = useState(0)
+  const [qMarkStart, setQMarkStart] = useState(0)
+  const [qMarkLength, setQMarkLength] = useState(0)
 
   useEffect(() => {
     setScaleStart(linksRef.current.offsetTop)
@@ -42,15 +44,20 @@ export default function Page({ data }: Props) {
         50
     )
     setPositionLength(titleRef.current.offsetTop)
+    setQMarkStart(introRef.current.offsetTop)
+    setQMarkLength((window.innerHeight / 4) * 3)
   })
-
-  const position = Math.round(
-    Math.min(Math.max(0, scrollPosition?.top / positionLength), 1) * 50
-  )
 
   const scale = parseFloat(
     Math.min(
       Math.max(0, (scrollPosition?.bottom - scaleStart) / scaleLength),
+      1
+    ).toFixed(2)
+  )
+
+  const qMarkPosition = parseFloat(
+    Math.min(
+      Math.max(0, (scrollPosition?.bottom - qMarkStart) / qMarkLength),
       1
     ).toFixed(2)
   )
@@ -65,7 +72,7 @@ export default function Page({ data }: Props) {
             <h1 ref={titleRef}>{page.title}</h1>
             <Description>{page.description}</Description>
           </div>
-          <ImageContainer style={{ transform: `translateX(${position}vw)` }}>
+          <ImageContainer>
             <GatsbyImage
               image={page.mainImage.asset.gatsbyImageData}
               alt=""
@@ -74,18 +81,47 @@ export default function Page({ data }: Props) {
           </ImageContainer>
         </FirstBlock>
         <Block ref={introRef}>
-          <h2>Kuka? Mitä?</h2>
+          <h2>
+            Kuka
+            <span
+              style={{
+                display: 'inline-block',
+                transform: `translateY(-${(1 - qMarkPosition) * 50}px)`,
+              }}
+            >
+              ?
+            </span>{' '}
+            Mitä
+            <span
+              style={{
+                display: 'inline-block',
+                transform: `rotate(${(1 - qMarkPosition) * 90}deg) translateX(${
+                  (1 - qMarkPosition) * 20
+                }px) translateY(-${(1 - qMarkPosition) * 20}px)`,
+              }}
+            >
+              ?
+            </span>
+          </h2>
           <div>{blocksToParagraphs(page.introduction)}</div>
           <Links ref={linksRef}>
             <ContactLink
               href="https://github.com/sallakos"
               icon={faGithub}
-              scale={scale}
+              scale={
+                width >= websiteTheme.breakpoints.tabletBreakpoint
+                  ? scale
+                  : null
+              }
             />
             <ContactLink
               href="https://www.linkedin.com/in/sallakos"
               icon={faLinkedin}
-              scale={2 - scale}
+              scale={
+                width >= websiteTheme.breakpoints.tabletBreakpoint
+                  ? 2 - scale
+                  : null
+              }
             />
           </Links>
         </Block>
@@ -144,44 +180,28 @@ const FirstBlock = styled(Block)`
   }
 
   h1 {
-    animation: slideFromTop 1.5s ease-in-out;
+    animation: slideFromTopMobile 1s ease-in-out;
+  }
+  @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
+    h1 {
+      animation: slideFromTop 1.5s ease-in-out;
+    }
   }
 
   ${Description} {
-    animation: slideFromBottom 2s ease-out;
-  }
-
-  @keyframes slideFromTop {
-    from {
-      transform: translateY(-50vh);
-    }
-
-    to {
-      transform: translateY(0%);
-    }
-  }
-  @keyframes slideFromBottom {
-    from {
-      transform: translate3d(-50vw, 50vh, 0);
-    }
-
-    to {
-      transform: translate3d(0, 0, 0);
+    animation: slideFromRight 1.5s ease-out;
+    @media (min-width: ${(props) =>
+        props.theme.breakpoints.tabletBreakpoint}px) {
+      animation: slideFromBottom 2s ease-out;
     }
   }
 `
 
 const ImageContainer = styled.div`
   margin-top: 30px;
-  animation: slideFromRight 2.5s;
-  @keyframes slideFromRight {
-    from {
-      transform: translateX(100%);
-    }
-
-    to {
-      transform: translateX(0%);
-    }
+  animation: slideFromBottom 2s;
+  @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
+    animation: slideFromRight 2s ease-out;
   }
 `
 

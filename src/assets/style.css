@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Mansalva&family=Open+Sans&family=Neucha&family=Amatic+SC&family=Shadows+Into+Light+Two&family=Pangolin&family=Architects+Daughter&family=Waiting+for+the+Sunrise&family=Covered+By+Your+Grace&display=swap');
+
+@keyframes slideFromTop {
+	from {
+		transform: translateY(-50vh);
+	}
+	to {
+		transform: translateY(0%);
+	}
+}
+
+@keyframes slideFromTopMobile {
+	from {
+		transform: translateY(-20vh);
+	}
+	to {
+		transform: translateY(0%);
+	}
+}
+
+@keyframes slideFromBottom {
+	from {
+		transform: translate3d(-50vw, 50vh, 0);
+	}
+	to {
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+@keyframes slideFromRight {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0%);
+  }
+}
