@@ -1,15 +1,27 @@
-import React from 'react'
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 import { GatsbyImage, StaticImage } from 'gatsby-plugin-image'
-import { Image } from '../templates/Page'
+
 import { useWindowSize } from '../utils/windowSize'
+import { useScrollPosition } from '../utils/scrollPosition'
 
-interface GalleryProps {
-  images: Image[]
-}
+import { Image } from '../templates/Page'
 
-export default function Gallery({ images }: GalleryProps) {
+export default function Gallery({ images, block }: GalleryProps) {
   const windowSize = useWindowSize()
+  const scrollPosition = useScrollPosition()
+
+  const gallery = useRef<HTMLDivElement>(null)
+
+  const [opacityStart, setOpacityStart] = useState(0)
+  const [opacityLength, setOpacityLength] = useState(0)
+  const [animationEnd, setAnimationEnd] = useState(0)
+
+  useEffect(() => {
+    setOpacityStart(gallery.current.offsetTop)
+    setOpacityLength(gallery.current.offsetHeight)
+    setAnimationEnd(block.current.offsetTop + block.current.offsetHeight)
+  })
 
   const width = windowSize?.width || 0
   const height = windowSize?.height || 0
@@ -29,15 +41,22 @@ export default function Gallery({ images }: GalleryProps) {
 
   const maxImgSize = Math.min(maxImgWidth, maxImgHeight)
 
+  const position = animationEnd - scrollPosition?.bottom || 0
+
+  const opacity = Math.min(
+    Math.max(0, (scrollPosition?.bottom - opacityStart) / opacityLength),
+    1
+  ).toFixed(2)
+
   return (
-    <GalleryGrid width={maxImgSize} rows={rows} columns={columns}>
-      {images.map((image) => (
-        <GalleryItem key={image._key}>
+    <GalleryGrid width={maxImgSize} rows={rows} columns={columns} ref={gallery}>
+      {images.map((image, index) => (
+        <GalleryItem key={image._key} opacity={opacity}>
           <GatsbyImage image={image.asset.gatsbyImageData} alt="" />
           <Caption>{image.caption}</Caption>
         </GalleryItem>
       ))}
-      <IGItem>
+      <IGItem position={position}>
         <a href="https://www.instagram.com/martinelamaa">
           <AbsoluteImageContainer>
             <StaticImage
@@ -73,24 +92,36 @@ const GalleryGrid = styled.div<{
 
 const Caption = styled.div`
   position: absolute;
-  bottom: 0;
+  top: 0;
+  height: 100%;
   padding: 10px;
   background-color: #00000091;
   width: 100%;
   color: white;
-  display: none;
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Shadows Into Light Two';
 `
 
-const GalleryItem = styled.div`
+const GalleryItem = styled.div.attrs((props: GalleryItemProps) => ({
+  style: { opacity: props.opacity },
+}))<GalleryItemProps>`
   position: relative;
   :hover {
     ${Caption} {
-      display: block;
+      opacity: 1;
     }
   }
 `
 
-const IGItem = styled.div`
+const IGItem = styled.div.attrs((props: IGItemProps) => ({
+  style: {
+    transform: `translate3d(${props.position}px, -${props.position / 2}px, 0)`,
+  },
+}))<IGItemProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -147,3 +178,16 @@ const IGText = styled.div`
   font-size: 1.5em;
   margin-top: 5px;
 `
+
+interface GalleryProps {
+  images: Image[]
+  block: MutableRefObject<HTMLDivElement>
+}
+
+interface GalleryItemProps {
+  opacity: string
+}
+
+interface IGItemProps {
+  position: number
+}
