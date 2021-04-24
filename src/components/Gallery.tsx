@@ -50,7 +50,7 @@ export default function Gallery({ images, block }: GalleryProps) {
 
   return (
     <GalleryGrid width={maxImgSize} rows={rows} columns={columns} ref={gallery}>
-      {images.map((image, index) => (
+      {images.map((image) => (
         <GalleryItem key={image._key} opacity={opacity}>
           <GatsbyImage image={image.asset.gatsbyImageData} alt="" />
           <Caption>{image.caption}</Caption>
