@@ -47,15 +47,13 @@ export default function Gallery({ images, block }: GalleryProps) {
 
   const opacity = (index: number) => {
     const offset = (index * opacityLength) / 4
-    return parseFloat(
-      Math.min(
-        Math.max(
-          0,
-          (scrollPosition?.bottom - (opacityStart + offset)) / opacityLength
-        ),
-        1
-      ).toFixed(2)
-    )
+    return Math.min(
+      Math.max(
+        0,
+        (scrollPosition?.bottom - (opacityStart + offset)) / opacityLength
+      ),
+      1
+    ).toFixed(2)
   }
 
   return (
@@ -195,7 +193,7 @@ interface GalleryProps {
 }
 
 interface GalleryItemProps {
-  opacity: number
+  opacity: string
 }
 
 interface IGItemProps {

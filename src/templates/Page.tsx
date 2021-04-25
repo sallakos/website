@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { graphql } from 'gatsby'
-import styled, { ThemeProvider, useTheme } from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import { GatsbyImage, IGatsbyImageData } from 'gatsby-plugin-image'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { blocksToParagraphs, BlockProps } from '../utils/utils'
