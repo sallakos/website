@@ -3,7 +3,7 @@ import { graphql } from 'gatsby'
 import styled, { ThemeProvider } from 'styled-components'
 import { GatsbyImage, IGatsbyImageData } from 'gatsby-plugin-image'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
-import { blocksToParagraphs, BlockProps } from '../utils/utils'
+import { blocksToParagraphs, BlockProps, scaleValue } from '../utils/utils'
 import { useScrollPosition } from '../utils/scrollPosition'
 import { useWindowWidth } from '../utils/windowSize'
 
@@ -15,6 +15,8 @@ import '../assets/style.css'
 import { GlobalStyle } from '../assets/style'
 import BackgroundImage from '../images/meshGradient.png'
 import { ContactLink } from '../components/ContactLink'
+import { Heading } from '../components/Heading'
+import { QMark } from '../components/QMark'
 
 export default function Page({ data }: Props) {
   const page = data.sanityPage
@@ -23,7 +25,6 @@ export default function Page({ data }: Props) {
   const width = useWindowWidth()
   const scrollPosition = useScrollPosition()
 
-  const titleRef = useRef<HTMLHeadingElement>(null)
   const introRef = useRef<HTMLDivElement>(null)
   const linksRef = useRef<HTMLDivElement>(null)
   const galleryRef = useRef<HTMLDivElement>(null)
@@ -31,7 +32,8 @@ export default function Page({ data }: Props) {
   const [scaleStart, setScaleStart] = useState(0)
   const [scaleLength, setScaleLength] = useState(0)
   const [qMarkStart, setQMarkStart] = useState(0)
-  const [qMarkLength, setQMarkLength] = useState(0)
+  const [dotStart, setDotStart] = useState(0)
+  const [animationLength, setAnimationLength] = useState(0)
 
   useEffect(() => {
     setScaleStart(linksRef.current.offsetTop)
@@ -42,21 +44,20 @@ export default function Page({ data }: Props) {
         50
     )
     setQMarkStart(introRef.current.offsetTop)
-    setQMarkLength((window.innerHeight / 4) * 3)
+    setDotStart(galleryRef.current.offsetTop)
+    setAnimationLength((window.innerHeight / 4) * 3)
   })
 
-  const scale = parseFloat(
-    Math.min(
-      Math.max(0, (scrollPosition?.bottom - scaleStart) / scaleLength),
-      1
-    ).toFixed(2)
+  const scale = scaleValue(scaleStart, scaleLength, scrollPosition?.bottom)
+  const qMarkPosition = scaleValue(
+    qMarkStart,
+    animationLength,
+    scrollPosition?.bottom
   )
-
-  const qMarkPosition = parseFloat(
-    Math.min(
-      Math.max(0, (scrollPosition?.bottom - qMarkStart) / qMarkLength),
-      1
-    ).toFixed(2)
+  const dotPosition = scaleValue(
+    dotStart,
+    animationLength,
+    scrollPosition?.bottom
   )
 
   return (
@@ -66,13 +67,14 @@ export default function Page({ data }: Props) {
       <BGWrap>
         <FirstBlock>
           <div>
-            <h1 ref={titleRef}>{page.title}</h1>
+            <Heading />
             <Description>{page.description}</Description>
           </div>
           <ImageContainer>
             <GatsbyImage
               image={page.mainImage.asset.gatsbyImageData}
               alt=""
+              style={{ borderRadius: '50%' }}
               imgClassName="mainImg"
             />
           </ImageContainer>
@@ -80,25 +82,15 @@ export default function Page({ data }: Props) {
         <Block ref={introRef}>
           <h2>
             Kuka
-            <span
-              style={{
-                display: 'inline-block',
-                transform: `translateY(-${(1 - qMarkPosition) * 50}px)`,
-              }}
-            >
-              ?
-            </span>{' '}
+            <QMark
+              transform={`translateY(-${(1 - qMarkPosition) * 50}px)`}
+            />{' '}
             Mitä
-            <span
-              style={{
-                display: 'inline-block',
-                transform: `rotate(${(1 - qMarkPosition) * 90}deg) translateX(${
-                  (1 - qMarkPosition) * 20
-                }px) translateY(-${(1 - qMarkPosition) * 20}px)`,
-              }}
-            >
-              ?
-            </span>
+            <QMark
+              transform={`rotate(${(1 - qMarkPosition) * 90}deg) translateX(${
+                (1 - qMarkPosition) * 20
+              }px) translateY(-${(1 - qMarkPosition) * 20}px)`}
+            />
           </h2>
           <div>{blocksToParagraphs(page.introduction)}</div>
           <Links ref={linksRef}>
@@ -123,7 +115,10 @@ export default function Page({ data }: Props) {
           </Links>
         </Block>
         <Block ref={galleryRef}>
-          <GalleryTitle>{gallery.title}</GalleryTitle>
+          <GalleryTitle>
+            {gallery.title}
+            <QMark transform={`translateY(-${(1 - dotPosition) * 50}px)`} dot />
+          </GalleryTitle>
           <Gallery images={gallery.images} block={galleryRef} />
         </Block>
       </BGWrap>
@@ -176,29 +171,20 @@ const FirstBlock = styled(Block)`
     }
   }
 
-  h1 {
-    animation: slideFromTopMobile 1s ease-in-out;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
-    h1 {
-      animation: slideFromTop 1.5s ease-in-out;
-    }
-  }
-
   ${Description} {
-    animation: slideFromRight 1.5s ease-out;
+    animation: opacity 2s ease-in-out;
     @media (min-width: ${(props) =>
         props.theme.breakpoints.tabletBreakpoint}px) {
-      animation: slideFromBottom 2s ease-out;
+      animation: expand 2s ease-in-out;
     }
   }
 `
 
 const ImageContainer = styled.div`
   margin-top: 30px;
-  animation: slideFromBottom 2s;
+  animation: expandImage 2s ease-in-out, opacity 2.5s;
   @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
-    animation: slideFromRight 2s ease-out;
+    animation: rotate 2s ease-in-out;
   }
 `
 
