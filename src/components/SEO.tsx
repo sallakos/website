@@ -24,15 +24,24 @@ export const SEO = () => {
     (image) => image.metaImage
   )[0].asset.url
 
+  const title = 'Salla Koskinen'
+  const description =
+    'Data-addikti ja krooninen matkakuumeilija, jonka intohimon kohteita ovat liikunta, tekniset härpäkkeet, excelöinti ja sarjojen tykittäminen Netflixistä.'
+
   return (
     <Helmet>
       <html lang="fi" />
-      <title>Salla Koskinen</title>
-      <meta
-        name="description"
-        content="Data-addikti ja krooninen matkakuumeilija, jonka intohimon kohteita ovat liikunta, tekniset härpäkkeet, excelöinti ja sarjojen tykittäminen Netflixistä."
-      />
+      <title>{title}</title>
+      <meta name="description" content={description} />
       <meta name="image" content={metaImageUrl} />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={metaImageUrl} />
+      <meta property="og:site_name" content={title} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={metaImageUrl} />
       <meta name="robots" content="noindex" />
     </Helmet>
   )
