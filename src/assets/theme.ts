@@ -1,6 +1,6 @@
 export const websiteTheme = {
   breakpoints: {
-    smallMobileBreakpoint: 414,
+    smallMobileBreakpoint: 401,
     mobileBreakpoint: 701,
     tabletBreakpoint: 1001,
   },

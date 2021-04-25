@@ -13,7 +13,8 @@ import { SEO } from '../components/SEO'
 import { websiteTheme } from '../assets/theme'
 import '../assets/style.css'
 import { GlobalStyle } from '../assets/style'
-import BackgroundImage from '../images/meshGradient.png'
+import BackgroundImage from '../images/meshDesk.png'
+import MobileBackgroundImage from '../images/meshMob.png'
 import { ContactLink } from '../components/ContactLink'
 import { Heading } from '../components/Heading'
 import { QMark } from '../components/QMark'
@@ -129,11 +130,19 @@ export default function Page({ data }: Props) {
 const BGWrap = styled.div`
   width: 100vw;
   overflow-x: hidden;
-  background: url(${BackgroundImage});
-  background-color: #adffdc;
+  background-color: #95ffe9;
+  background: linear-gradient(101deg, #94ffea 0%, #62c5ba 41%, #217a7c 57%);
+  background: url(${MobileBackgroundImage});
   background-size: cover;
-  background-position: center top;
-  background-attachment: scroll;
+  background-position: 40% top;
+
+  @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
+    background-color: #95ffe9;
+    background: linear-gradient(101deg, #94ffea 0%, #62c5ba 41%, #217a7c 57%);
+    background: url(${BackgroundImage});
+    background-size: cover;
+    background-position: center top;
+  }
 `
 
 const Block = styled.div`
