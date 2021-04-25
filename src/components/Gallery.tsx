@@ -19,7 +19,9 @@ export default function Gallery({ images, block }: GalleryProps) {
 
   useEffect(() => {
     setOpacityStart(gallery.current.offsetTop)
-    setOpacityLength(gallery.current.offsetHeight)
+    setOpacityLength(
+      (document.body.offsetHeight - gallery.current.offsetTop) / 2
+    )
     setAnimationEnd(block.current.offsetTop + block.current.offsetHeight)
   })
 
@@ -43,15 +45,23 @@ export default function Gallery({ images, block }: GalleryProps) {
 
   const position = animationEnd - scrollPosition?.bottom || 0
 
-  const opacity = Math.min(
-    Math.max(0, (scrollPosition?.bottom - opacityStart) / opacityLength),
-    1
-  ).toFixed(2)
+  const opacity = (index: number) => {
+    const offset = (index * opacityLength) / 4
+    return parseFloat(
+      Math.min(
+        Math.max(
+          0,
+          (scrollPosition?.bottom - (opacityStart + offset)) / opacityLength
+        ),
+        1
+      ).toFixed(2)
+    )
+  }
 
   return (
     <GalleryGrid width={maxImgSize} rows={rows} columns={columns} ref={gallery}>
-      {images.map((image) => (
-        <GalleryItem key={image._key} opacity={opacity}>
+      {images.map((image, index) => (
+        <GalleryItem key={image._key} opacity={opacity(index)}>
           <GatsbyImage image={image.asset.gatsbyImageData} alt="" />
           <Caption>{image.caption}</Caption>
         </GalleryItem>
@@ -185,7 +195,7 @@ interface GalleryProps {
 }
 
 interface GalleryItemProps {
-  opacity: string
+  opacity: number
 }
 
 interface IGItemProps {

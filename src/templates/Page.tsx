@@ -20,7 +20,6 @@ export default function Page({ data }: Props) {
   const page = data.sanityPage
   const gallery = data.sanityGallery
 
-  const theme = useTheme()
   const width = useWindowWidth()
   const scrollPosition = useScrollPosition()
 
@@ -31,7 +30,6 @@ export default function Page({ data }: Props) {
 
   const [scaleStart, setScaleStart] = useState(0)
   const [scaleLength, setScaleLength] = useState(0)
-  const [positionLength, setPositionLength] = useState(0)
   const [qMarkStart, setQMarkStart] = useState(0)
   const [qMarkLength, setQMarkLength] = useState(0)
 
@@ -43,7 +41,6 @@ export default function Page({ data }: Props) {
         linksRef.current.offsetTop -
         50
     )
-    setPositionLength(titleRef.current.offsetTop)
     setQMarkStart(introRef.current.offsetTop)
     setQMarkLength((window.innerHeight / 4) * 3)
   })
