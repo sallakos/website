@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mansalva&family=Open+Sans&family=Neucha&family=Amatic+SC&family=Shadows+Into+Light+Two&family=Pangolin&family=Architects+Daughter&family=Waiting+for+the+Sunrise&family=Covered+By+Your+Grace&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC&family=Architects+Daughter&family=Covered+By+Your+Grace&family=Crafty+Girls&family=Mansalva&family=Neucha&family=Shadows+Into+Light+Two&family=Sue+Ellen+Francisco&display=swap');
 
 @keyframes slideFromRight {
 	from {
@@ -48,5 +48,17 @@
 	}
 	to {
 		opacity: 1;
+	}
+}
+
+@keyframes expandText {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
 	}
 }

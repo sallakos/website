@@ -253,7 +253,7 @@ export const query = graphql`
         }
       }
     }
-    sanityGallery(title: { eq: "Välähdyksiä." }) {
+    sanityGallery(title: { eq: "Välähdyksiä" }) {
       title
       images {
         _key

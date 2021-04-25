@@ -6,23 +6,31 @@ import { useWindowSize } from '../utils/windowSize'
 import { useScrollPosition } from '../utils/scrollPosition'
 
 import { Image } from '../templates/Page'
+import { IGMore } from './IGMore'
+import { Arrow } from './Arrow'
+import { scaleValue } from '../utils/utils'
 
 export default function Gallery({ images, block }: GalleryProps) {
   const windowSize = useWindowSize()
   const scrollPosition = useScrollPosition()
 
   const gallery = useRef<HTMLDivElement>(null)
+  const igUser = useRef<HTMLDivElement>(null)
 
   const [opacityStart, setOpacityStart] = useState(0)
   const [opacityLength, setOpacityLength] = useState(0)
-  const [animationEnd, setAnimationEnd] = useState(0)
 
   useEffect(() => {
     setOpacityStart(gallery.current.offsetTop)
     setOpacityLength(
       (document.body.offsetHeight - gallery.current.offsetTop) / 2
     )
-    setAnimationEnd(block.current.offsetTop + block.current.offsetHeight)
+  })
+
+  useEffect(() => {
+    if (opacity(5) >= 1) {
+      igUser.current.classList.add('animate')
+    }
   })
 
   const width = windowSize?.width || 0
@@ -38,22 +46,22 @@ export default function Gallery({ images, block }: GalleryProps) {
       ? 50
       : 40
 
+  const wideArrow = width >= theme.breakpoints.tabletBreakpoint ? true : false
+
   const maxImgHeight = (height - 2 * padding - 150) / rows
   const maxImgWidth = (width - 2 * padding) / columns
 
   const maxImgSize = Math.min(maxImgWidth, maxImgHeight)
 
-  const position = animationEnd - scrollPosition?.bottom || 0
-
   const opacity = (index: number) => {
-    const offset = (index * opacityLength) / 4
-    return Math.min(
-      Math.max(
-        0,
-        (scrollPosition?.bottom - (opacityStart + offset)) / opacityLength
-      ),
-      1
-    ).toFixed(2)
+    const offset = (index * opacityLength) / 5
+    const value = scaleValue(
+      opacityStart + offset,
+      opacityLength,
+      scrollPosition?.bottom
+    )
+
+    return isNaN(value) ? 0 : value
   }
 
   return (
@@ -64,23 +72,21 @@ export default function Gallery({ images, block }: GalleryProps) {
           <Caption>{image.caption}</Caption>
         </GalleryItem>
       ))}
-      <IGItem position={position}>
+      <IGItem opacity={opacity(5)}>
         <a href="https://www.instagram.com/martinelamaa">
           <AbsoluteImageContainer>
-            <StaticImage
-              src="../images/doggo.png"
-              alt=""
-              placeholder="blurred"
-            />
+            <Arrow animate={opacity(5)} wide={wideArrow} />
+            <IGMore animate={opacity(5)} />
           </AbsoluteImageContainer>
           <ImageContainer>
             <StaticImage
               src="../images/igGlyph.png"
               alt=""
               placeholder="blurred"
+              className="igImageContainer"
             />
           </ImageContainer>
-          <IGText>@martinelamaa</IGText>
+          <IGText ref={igUser}>@martinelamaa</IGText>
         </a>
       </IGItem>
     </GalleryGrid>
@@ -125,23 +131,32 @@ const GalleryItem = styled.div.attrs((props: GalleryItemProps) => ({
   }
 `
 
-const IGItem = styled.div.attrs((props: IGItemProps) => ({
-  style: {
-    transform: `translate3d(${props.position}px, -${props.position / 2}px, 0)`,
-  },
-}))<IGItemProps>`
+const IGItem = styled.div.attrs((props: GalleryItemProps) => ({
+  style: { opacity: props.opacity },
+}))<GalleryItemProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   position: relative;
   padding-bottom: 10px;
-  grid-column: 2;
-  grid-row: 2;
 
+  grid-column: 2;
+  grid-row: 1;
+
+  @media (min-width: ${(props) =>
+      props.theme.breakpoints.smallMobileBreakpoint}px) {
+    grid-column: 2;
+    grid-row: 2;
+  }
   @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
     grid-column: 3;
     grid-row: 1;
+  }
+
+  .igImageContainer {
+    transform: scale(1);
+    transition: transform 250ms ease-in-out;
   }
 
   a {
@@ -150,6 +165,14 @@ const IGItem = styled.div.attrs((props: IGItemProps) => ({
     align-items: center;
     justify-content: flex-end;
     position: relative;
+  }
+
+  a:hover .igImageContainer {
+    transform: scale(1.02);
+  }
+
+  a:hover .arrow {
+    stroke: #063e3b;
   }
 
   @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
@@ -170,21 +193,32 @@ const ImageContainer = styled.div`
 
 const AbsoluteImageContainer = styled.div`
   position: absolute;
-  top: -53%;
-  left: 16%;
-  right: 26%;
+  overflow: visible;
+  top: -42%;
+  left: -75%;
+  width: 200%;
 
   @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
-    top: -34%;
-    left: 7%;
-    right: 37%;
+    top: -25%;
+    left: -10%;
+    width: 80%;
   }
 `
 
 const IGText = styled.div`
-  font-family: 'Neucha', sans-serif;
+  font-family: 'Sue Ellen Francisco', sans-serif;
   font-size: 1.5em;
-  margin-top: 5px;
+  line-height: 0.8;
+
+  &.animate {
+    animation: expandText 1s;
+    animation-delay: 3s;
+  }
+
+  @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
+    line-height: initial;
+    font-size: 2em;
+  }
 `
 
 interface GalleryProps {
@@ -193,9 +227,5 @@ interface GalleryProps {
 }
 
 interface GalleryItemProps {
-  opacity: string
-}
-
-interface IGItemProps {
-  position: number
+  opacity: number
 }
