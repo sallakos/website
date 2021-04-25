@@ -32,6 +32,7 @@ export const SEO = () => {
     <Helmet>
       <html lang="fi" />
       <title>{title}</title>
+      <link href="https://sallakoskinen.fi" rel="canonical" />
       <meta name="description" content={description} />
       <meta name="image" content={metaImageUrl} />
       <meta property="og:type" content="article" />
