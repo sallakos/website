@@ -127,9 +127,10 @@ export default function Page({ data }: Props) {
   )
 }
 
-const BGWrap = styled.div`
+export const BGWrap = styled.div`
   width: 100vw;
   overflow-x: hidden;
+  min-height: 100vh;
   background-color: #95ffe9;
   background: linear-gradient(101deg, #94ffea 0%, #62c5ba 41%, #217a7c 57%);
   background: url(${MobileBackgroundImage});
