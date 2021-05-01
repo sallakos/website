@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { blocksToParagraphs, scaleValue } from '../utils/utils'
 import { useScrollPosition } from '../utils/scrollPosition'
-import { useWindowWidth } from '../utils/windowSize'
 
 import { Block, PageData, GalleryData } from '../templates/Page'
 import Gallery from '../components/Gallery'
@@ -75,11 +74,13 @@ export const Blocks = ({ page, gallery, isDesktop }: BlocksProps) => {
             href="https://github.com/sallakos"
             icon={faGithub}
             scale={isDesktop ? scale : null}
+            label="Github"
           />
           <ContactLink
             href="https://www.linkedin.com/in/sallakos"
             icon={faLinkedin}
             scale={isDesktop ? 2 - scale : null}
+            label="LinkedIn"
           />
         </Links>
       </Block>
