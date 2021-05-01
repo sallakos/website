@@ -31,7 +31,6 @@ export default function Page({ data }: Props) {
   return (
     <ThemeProvider theme={websiteTheme}>
       <SEO />
-      {console.log('render')}
       <GlobalStyle />
       <BgImage
         image={bg}
@@ -39,24 +38,24 @@ export default function Page({ data }: Props) {
       >
         <BGWrap>
           <FirstBlock>
-            <div>
-              <Heading />
-              <Description>{page.description}</Description>
-            </div>
-            <ImageContainer>
-              <GatsbyImage
-                image={page.mainImage.asset.gatsbyImageData}
-                alt=""
-                style={{ borderRadius: '50%' }}
-                imgClassName="mainImg"
-              />
-            </ImageContainer>
+            {width ? (
+              <>
+                <div>
+                  <Heading />
+                  <Description>{page.description}</Description>
+                </div>
+                <ImageContainer>
+                  <GatsbyImage
+                    image={page.mainImage.asset.gatsbyImageData}
+                    alt=""
+                    style={{ borderRadius: '50%' }}
+                    imgClassName="mainImg"
+                  />
+                </ImageContainer>
+              </>
+            ) : null}
           </FirstBlock>
-          <Blocks
-            page={page}
-            gallery={gallery}
-            breakpoints={websiteTheme.breakpoints}
-          />
+          <Blocks page={page} gallery={gallery} isDesktop={isDesktop} />
         </BGWrap>
       </BgImage>
     </ThemeProvider>

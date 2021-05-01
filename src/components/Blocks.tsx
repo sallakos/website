@@ -13,18 +13,11 @@ import { QMark } from '../components/QMark'
 interface BlocksProps {
   page: PageData
   gallery: GalleryData
-  breakpoints: {
-    smallMobileBreakpoint: number
-    mobileBreakpoint: number
-    tabletBreakpoint: number
-  }
+  isDesktop: boolean
 }
 
-export const Blocks = ({ page, gallery, breakpoints }: BlocksProps) => {
-  const width = useWindowWidth()
+export const Blocks = ({ page, gallery, isDesktop }: BlocksProps) => {
   const scrollPosition = useScrollPosition()
-
-  const isDesktop = width >= breakpoints.tabletBreakpoint
 
   const introRef = useRef<HTMLDivElement>(null)
   const linksRef = useRef<HTMLDivElement>(null)
