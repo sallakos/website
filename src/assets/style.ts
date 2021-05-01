@@ -8,6 +8,7 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-family: 'Neucha', sans-serif;
     font-size: 20px;
+    background-color: #95ffe9;
   }
   h1 {
     font-family: 'Mansalva', serif; 

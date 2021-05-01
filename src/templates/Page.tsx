@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { graphql } from 'gatsby'
 import styled, { ThemeProvider } from 'styled-components'
 import { GatsbyImage, IGatsbyImageData } from 'gatsby-plugin-image'
+import { BgImage } from 'gbimage-bridge'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { blocksToParagraphs, BlockProps, scaleValue } from '../utils/utils'
 import { useScrollPosition } from '../utils/scrollPosition'
@@ -13,8 +14,6 @@ import { SEO } from '../components/SEO'
 import { websiteTheme } from '../assets/theme'
 import '../assets/style.css'
 import { GlobalStyle } from '../assets/style'
-import BackgroundImage from '../images/meshDesk.png'
-import MobileBackgroundImage from '../images/meshMob.png'
 import { ContactLink } from '../components/ContactLink'
 import { Heading } from '../components/Heading'
 import { QMark } from '../components/QMark'
@@ -22,9 +21,12 @@ import { QMark } from '../components/QMark'
 export default function Page({ data }: Props) {
   const page = data.sanityPage
   const gallery = data.sanityGallery
+  const bgImage = data.bgImage
+  const mobileBgImage = data.mobileBgImage
 
   const width = useWindowWidth()
   const scrollPosition = useScrollPosition()
+  const isDesktop = width >= websiteTheme.breakpoints.tabletBreakpoint
 
   const introRef = useRef<HTMLDivElement>(null)
   const linksRef = useRef<HTMLDivElement>(null)
@@ -61,68 +63,81 @@ export default function Page({ data }: Props) {
     scrollPosition?.bottom
   )
 
+  const desktopBg = bgImage?.childImageSharp?.gatsbyImageData
+  const mobileBg = mobileBgImage?.childImageSharp?.gatsbyImageData
+
+  const bg = isDesktop ? desktopBg : mobileBg
+
   return (
     <ThemeProvider theme={websiteTheme}>
       <SEO />
       <GlobalStyle />
-      <BGWrap>
-        <FirstBlock>
-          <div>
-            <Heading />
-            <Description>{page.description}</Description>
-          </div>
-          <ImageContainer>
-            <GatsbyImage
-              image={page.mainImage.asset.gatsbyImageData}
-              alt=""
-              style={{ borderRadius: '50%' }}
-              imgClassName="mainImg"
-            />
-          </ImageContainer>
-        </FirstBlock>
-        <Block ref={introRef}>
-          <h2>
-            Kuka
-            <QMark
-              transform={`translateY(-${(1 - qMarkPosition) * 50}px)`}
-            />{' '}
-            Mitä
-            <QMark
-              transform={`rotate(${(1 - qMarkPosition) * 90}deg) translateX(${
-                (1 - qMarkPosition) * 20
-              }px) translateY(-${(1 - qMarkPosition) * 20}px)`}
-            />
-          </h2>
-          <div>{blocksToParagraphs(page.introduction)}</div>
-          <Links ref={linksRef}>
-            <ContactLink
-              href="https://github.com/sallakos"
-              icon={faGithub}
-              scale={
-                width >= websiteTheme.breakpoints.tabletBreakpoint
-                  ? scale
-                  : null
-              }
-            />
-            <ContactLink
-              href="https://www.linkedin.com/in/sallakos"
-              icon={faLinkedin}
-              scale={
-                width >= websiteTheme.breakpoints.tabletBreakpoint
-                  ? 2 - scale
-                  : null
-              }
-            />
-          </Links>
-        </Block>
-        <Block ref={galleryRef}>
-          <GalleryTitle>
-            {gallery.title}
-            <QMark transform={`translateY(-${(1 - dotPosition) * 50}px)`} dot />
-          </GalleryTitle>
-          <Gallery images={gallery.images} block={galleryRef} />
-        </Block>
-      </BGWrap>
+      <BgImage
+        image={bg}
+        style={{ backgroundPosition: isDesktop ? 'center top' : '40% top' }}
+      >
+        <BGWrap>
+          <FirstBlock>
+            <div>
+              <Heading />
+              <Description>{page.description}</Description>
+            </div>
+            <ImageContainer>
+              <GatsbyImage
+                image={page.mainImage.asset.gatsbyImageData}
+                alt=""
+                style={{ borderRadius: '50%' }}
+                imgClassName="mainImg"
+              />
+            </ImageContainer>
+          </FirstBlock>
+          <Block ref={introRef}>
+            <h2>
+              Kuka
+              <QMark
+                transform={`translateY(-${(1 - qMarkPosition) * 50}px)`}
+              />{' '}
+              Mitä
+              <QMark
+                transform={`rotate(${(1 - qMarkPosition) * 90}deg) translateX(${
+                  (1 - qMarkPosition) * 20
+                }px) translateY(-${(1 - qMarkPosition) * 20}px)`}
+              />
+            </h2>
+            <div>{blocksToParagraphs(page.introduction)}</div>
+            <Links ref={linksRef}>
+              <ContactLink
+                href="https://github.com/sallakos"
+                icon={faGithub}
+                scale={
+                  width >= websiteTheme.breakpoints.tabletBreakpoint
+                    ? scale
+                    : null
+                }
+              />
+              <ContactLink
+                href="https://www.linkedin.com/in/sallakos"
+                icon={faLinkedin}
+                scale={
+                  width >= websiteTheme.breakpoints.tabletBreakpoint
+                    ? 2 - scale
+                    : null
+                }
+              />
+            </Links>
+          </Block>
+          <Block ref={galleryRef}>
+            <GalleryTitle>
+              {gallery.title}
+              <QMark
+                transform={`translateY(-${(1 - dotPosition) * 50}px)`}
+                dot
+              />
+            </GalleryTitle>
+            <Gallery images={gallery.images} block={galleryRef} />
+          </Block>
+        </BGWrap>
+      </BgImage>
     </ThemeProvider>
   )
 }
@@ -131,19 +146,6 @@ export const BGWrap = styled.div`
   width: 100vw;
   overflow-x: hidden;
   min-height: 100vh;
-  background-color: #95ffe9;
-  background: linear-gradient(101deg, #94ffea 0%, #62c5ba 41%, #217a7c 57%);
-  background: url(${MobileBackgroundImage});
-  background-size: cover;
-  background-position: 40% top;
-
-  @media (min-width: ${(props) => props.theme.breakpoints.tabletBreakpoint}px) {
-    background-color: #95ffe9;
-    background: linear-gradient(101deg, #94ffea 0%, #62c5ba 41%, #217a7c 57%);
-    background: url(${BackgroundImage});
-    background-size: cover;
-    background-position: center top;
-  }
 `
 
 const Block = styled.div`
@@ -214,6 +216,16 @@ interface Props {
   data: {
     sanityPage: PageData
     sanityGallery: GalleryData
+    bgImage: {
+      childImageSharp: {
+        gatsbyImageData: IGatsbyImageData
+      }
+    }
+    mobileBgImage: {
+      childImageSharp: {
+        gatsbyImageData: IGatsbyImageData
+      }
+    }
   }
 }
 
@@ -276,6 +288,16 @@ export const query = graphql`
           )
         }
         caption
+      }
+    }
+    bgImage: file(name: { eq: "meshDesk" }) {
+      childImageSharp {
+        gatsbyImageData(layout: FULL_WIDTH, placeholder: BLURRED, quality: 100)
+      }
+    }
+    mobileBgImage: file(name: { eq: "meshMob" }) {
+      childImageSharp {
+        gatsbyImageData(layout: FULL_WIDTH, placeholder: BLURRED, quality: 100)
       }
     }
   }
