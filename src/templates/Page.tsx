@@ -1,22 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { graphql } from 'gatsby'
 import styled, { ThemeProvider } from 'styled-components'
 import { GatsbyImage, IGatsbyImageData } from 'gatsby-plugin-image'
 import { BgImage } from 'gbimage-bridge'
-import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
-import { blocksToParagraphs, BlockProps, scaleValue } from '../utils/utils'
-import { useScrollPosition } from '../utils/scrollPosition'
+import { BlockProps } from '../utils/utils'
 import { useWindowWidth } from '../utils/windowSize'
 
-import Gallery from '../components/Gallery'
 import { SEO } from '../components/SEO'
 
 import { websiteTheme } from '../assets/theme'
 import '../assets/style.css'
 import { GlobalStyle } from '../assets/style'
-import { ContactLink } from '../components/ContactLink'
 import { Heading } from '../components/Heading'
-import { QMark } from '../components/QMark'
+import { Blocks } from '../components/Blocks'
 
 export default function Page({ data }: Props) {
   const page = data.sanityPage
@@ -25,43 +21,7 @@ export default function Page({ data }: Props) {
   const mobileBgImage = data.mobileBgImage
 
   const width = useWindowWidth()
-  const scrollPosition = useScrollPosition()
   const isDesktop = width >= websiteTheme.breakpoints.tabletBreakpoint
-
-  const introRef = useRef<HTMLDivElement>(null)
-  const linksRef = useRef<HTMLDivElement>(null)
-  const galleryRef = useRef<HTMLDivElement>(null)
-
-  const [scaleStart, setScaleStart] = useState(0)
-  const [scaleLength, setScaleLength] = useState(0)
-  const [qMarkStart, setQMarkStart] = useState(0)
-  const [dotStart, setDotStart] = useState(0)
-  const [animationLength, setAnimationLength] = useState(0)
-
-  useEffect(() => {
-    setScaleStart(linksRef.current.offsetTop)
-    setScaleLength(
-      introRef.current.offsetTop +
-        introRef.current.offsetHeight -
-        linksRef.current.offsetTop -
-        50
-    )
-    setQMarkStart(introRef.current.offsetTop)
-    setDotStart(galleryRef.current.offsetTop)
-    setAnimationLength((window.innerHeight / 4) * 3)
-  })
-
-  const scale = scaleValue(scaleStart, scaleLength, scrollPosition?.bottom)
-  const qMarkPosition = scaleValue(
-    qMarkStart,
-    animationLength,
-    scrollPosition?.bottom
-  )
-  const dotPosition = scaleValue(
-    dotStart,
-    animationLength,
-    scrollPosition?.bottom
-  )
 
   const desktopBg = bgImage?.childImageSharp?.gatsbyImageData
   const mobileBg = mobileBgImage?.childImageSharp?.gatsbyImageData
@@ -71,6 +31,7 @@ export default function Page({ data }: Props) {
   return (
     <ThemeProvider theme={websiteTheme}>
       <SEO />
+      {console.log('render')}
       <GlobalStyle />
       <BgImage
         image={bg}
@@ -91,51 +52,11 @@ export default function Page({ data }: Props) {
               />
             </ImageContainer>
           </FirstBlock>
-          <Block ref={introRef}>
-            <h2>
-              Kuka
-              <QMark
-                transform={`translateY(-${(1 - qMarkPosition) * 50}px)`}
-              />{' '}
-              Mitä
-              <QMark
-                transform={`rotate(${(1 - qMarkPosition) * 90}deg) translateX(${
-                  (1 - qMarkPosition) * 20
-                }px) translateY(-${(1 - qMarkPosition) * 20}px)`}
-              />
-            </h2>
-            <div>{blocksToParagraphs(page.introduction)}</div>
-            <Links ref={linksRef}>
-              <ContactLink
-                href="https://github.com/sallakos"
-                icon={faGithub}
-                scale={
-                  width >= websiteTheme.breakpoints.tabletBreakpoint
-                    ? scale
-                    : null
-                }
-              />
-              <ContactLink
-                href="https://www.linkedin.com/in/sallakos"
-                icon={faLinkedin}
-                scale={
-                  width >= websiteTheme.breakpoints.tabletBreakpoint
-                    ? 2 - scale
-                    : null
-                }
-              />
-            </Links>
-          </Block>
-          <Block ref={galleryRef}>
-            <GalleryTitle>
-              {gallery.title}
-              <QMark
-                transform={`translateY(-${(1 - dotPosition) * 50}px)`}
-                dot
-              />
-            </GalleryTitle>
-            <Gallery images={gallery.images} block={galleryRef} />
-          </Block>
+          <Blocks
+            page={page}
+            gallery={gallery}
+            breakpoints={websiteTheme.breakpoints}
+          />
         </BGWrap>
       </BgImage>
     </ThemeProvider>
@@ -148,7 +69,7 @@ export const BGWrap = styled.div`
   min-height: 100vh;
 `
 
-const Block = styled.div`
+export const Block = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -200,18 +121,6 @@ const ImageContainer = styled.div`
   }
 `
 
-const Links = styled.div`
-  margin-top: 30px;
-  a:last-of-type {
-    margin-left: 30px;
-  }
-`
-
-const GalleryTitle = styled.h2`
-  margin-bottom: 2em;
-  font-family: 'Covered By Your Grace', serif;
-`
-
 interface Props {
   data: {
     sanityPage: PageData
@@ -229,7 +138,7 @@ interface Props {
   }
 }
 
-interface PageData {
+export interface PageData {
   title: string
   description: string
   mainImage: {
@@ -240,7 +149,7 @@ interface PageData {
   introduction: BlockProps[]
 }
 
-interface GalleryData {
+export interface GalleryData {
   title: string
   images: Image[]
 }
