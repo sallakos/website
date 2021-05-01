@@ -5,14 +5,10 @@ import { graphql, useStaticQuery } from 'gatsby'
 export const SEO = () => {
   const query = graphql`
     query {
-      allSanityGallery {
+      allSanityImageAsset {
         nodes {
-          images {
-            metaImage
-            asset {
-              url
-            }
-          }
+          originalFilename
+          url
         }
       }
     }
@@ -20,16 +16,17 @@ export const SEO = () => {
 
   const data: QueryResult = useStaticQuery(query)
 
-  const metaImageUrl = data.allSanityGallery.nodes[0].images.filter(
-    (image) => image.metaImage
-  )[0].asset.url
+  const metaImageUrl = data.allSanityImageAsset.nodes.filter(
+    (image) => image.originalFilename === 'sallakoskinen.png'
+  )[0].url
 
   const title = 'Salla Koskinen'
   const description =
     'Data-addikti ja krooninen matkakuumeilija, jonka intohimon kohteita ovat liikunta, tekniset härpäkkeet, excelöinti ja sarjojen tykittäminen Netflixistä.'
+  const shortDescription = 'Data-addikti ja krooninen matkakuumeilija.'
 
   return (
-    <Helmet>
+    <Helmet defaultTitle={title}>
       <html lang="fi" />
       <title>{title}</title>
       <link href="https://sallakoskinen.fi" rel="canonical" />
@@ -37,30 +34,24 @@ export const SEO = () => {
       <meta name="image" content={metaImageUrl} />
       <meta property="og:type" content="website" />
       <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:description" content={shortDescription} />
       <meta property="og:image" content={metaImageUrl} />
       <meta property="og:site_name" content={title} />
+      <meta property="og:locale" content="fi_FI" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={metaImageUrl} />
-      <meta name="robots" content="noindex" />
     </Helmet>
   )
 }
 
 interface QueryResult {
-  allSanityGallery: {
+  allSanityImageAsset: {
     nodes: ImageNode[]
   }
 }
 
 interface ImageNode {
-  images: ImageProps[]
-}
-
-interface ImageProps {
-  metaImage: boolean
-  asset: {
-    url: string
-  }
+  originalFilename: string
+  url: string
 }
