@@ -29,36 +29,38 @@ export default function Page({ data }: Props) {
   const bg = isDesktop ? desktopBg : mobileBg
 
   return (
-    <ThemeProvider theme={websiteTheme}>
+    <>
       <SEO />
-      <GlobalStyle />
-      <BgImage
-        image={bg}
-        style={{ backgroundPosition: isDesktop ? 'center top' : '40% top' }}
-      >
-        <BGWrap>
-          <FirstBlock>
-            {width ? (
-              <>
-                <div>
-                  <Heading />
-                  <Description>{page.description}</Description>
-                </div>
-                <ImageContainer>
-                  <GatsbyImage
-                    image={page.mainImage.asset.gatsbyImageData}
-                    alt=""
-                    style={{ borderRadius: '50%' }}
-                    imgClassName="mainImg"
-                  />
-                </ImageContainer>
-              </>
-            ) : null}
-          </FirstBlock>
-          <Blocks page={page} gallery={gallery} isDesktop={isDesktop} />
-        </BGWrap>
-      </BgImage>
-    </ThemeProvider>
+      <ThemeProvider theme={websiteTheme}>
+        <GlobalStyle />
+        <BgImage
+          image={bg}
+          style={{ backgroundPosition: isDesktop ? 'center top' : '40% top' }}
+        >
+          <BGWrap>
+            <FirstBlock>
+              {width ? (
+                <>
+                  <div>
+                    <Heading />
+                    <Description>{page.description}</Description>
+                  </div>
+                  <ImageContainer>
+                    <GatsbyImage
+                      image={page.mainImage.asset.gatsbyImageData}
+                      alt=""
+                      style={{ borderRadius: '50%' }}
+                      imgClassName="mainImg"
+                    />
+                  </ImageContainer>
+                </>
+              ) : null}
+            </FirstBlock>
+            <Blocks page={page} gallery={gallery} isDesktop={isDesktop} />
+          </BGWrap>
+        </BgImage>
+      </ThemeProvider>
+    </>
   )
 }
 

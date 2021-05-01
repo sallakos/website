@@ -32,9 +32,10 @@ export const SEO = () => {
       <link href="https://sallakoskinen.fi" rel="canonical" />
       <meta name="description" content={description} />
       <meta name="image" content={metaImageUrl} />
-      <meta property="og:type" content="website" />
       <meta property="og:title" content={title} />
+      <meta property="og:type" content="website" />
       <meta property="og:description" content={shortDescription} />
+      <meta property="og:url" content="https://sallakoskinen.fi" />
       <meta property="og:image" content={metaImageUrl} />
       <meta property="og:site_name" content={title} />
       <meta property="og:locale" content="fi_FI" />
